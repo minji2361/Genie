@@ -35,15 +35,15 @@ export default function Navigation() {
                     <Link className="flex shrink-0 justify-center items-center min-w-0" href="/">
                         <Image
                             src="/Group 6.png"
-                            alt="ReframePoint Logo"
+                            alt="Genie Logo"
                             width={60}
                             height={60}
                             priority
                             className="mr-2 size-10 sm:size-[60px]"
                         />
                         <h1 className="text-sm font-bold sm:text-base lg:text-xl">
-                            <span className="text-Bgreen">Reframe</span>
-                            <span className="text-Byellow">Point</span>
+                            <span className="text-Bgreen">Genie</span>
+                            {/* <span className="text-Byellow">ie</span> */}
                         </h1>
                     </Link>
 

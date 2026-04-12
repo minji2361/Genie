@@ -16,6 +16,7 @@ module.exports = {
                 Bdark: '#24272C',
                 Benamel: '#f4e2d0',
                 Blightbeige: '#faf8f4',
+                Bpinkish: '#D97BA8',
             },
         },
     },

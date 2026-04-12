@@ -617,7 +617,7 @@ function DeepQuestionPage() {
                             </p>
 
                             <p className="mt-6 text-amber-200 font-semibold tracking-wide">프로젝트 딥퀘스쳔</p>
-                            <p className="mt-2 text-xs md:text-sm text-white/55">Powered by Reframe Point.</p>
+                            <p className="mt-2 text-xs md:text-sm text-white/55">Powered by Genie.</p>
 
                             <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
                                 <Link
@@ -942,7 +942,7 @@ function DeepQuestionPage() {
                             </Link>
                         </div>
 
-                        <p className="mt-6 text-xs md:text-sm text-white/55">Powered by Reframe Point.</p>
+                        <p className="mt-6 text-xs md:text-sm text-white/55">Powered by Genie.</p>
                     </div>
                 </div>
             </section>

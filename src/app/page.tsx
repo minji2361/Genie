@@ -57,8 +57,8 @@ export default function Home() {
 
                         <div className="text-white font-semibold text-3xl leading-snug z-50 mt-4 relative">
                             welcome to <br />
-                            <span className="text-Bgreen stroke-Bbeige">R</span>eframe{' '}
-                            <span className="text-Byellow">P</span>oint
+                            <span className="text-Bgreen stroke-Bbeige"></span>{' '}
+                            <span className="text-Byellow">G</span>enie
                             <p className="text-base text-gray-300 mt-2 font-normal">당신의 관점을 바꾸는 새로운 시작</p>
                         </div>
 
@@ -71,7 +71,7 @@ export default function Home() {
                     </div>
 
                     <div className="w-[390px] h-[570px] bg-white border-[10px] border-Bgreen rounded-[240px] z-20 shadow-xl flex flex-col items-center justify-center gap-4 px-6 relative">
-                        <div className="absolute top-8 text-Bgreen text-[120px] font-bold rotate-[30deg]">R</div>
+                        <div className="absolute top-8 text-Bgreen text-[120px] font-bold rotate-[30deg]">G</div>
 
                         <Image
                             src="/Group 6.png"
@@ -81,7 +81,7 @@ export default function Home() {
                             priority
                         />
 
-                        <div className="absolute bottom-8 text-Bgreen text-[120px] font-bold -rotate-[40deg]">P</div>
+                        <div className="absolute bottom-8 text-Bgreen text-[120px] font-bold -rotate-[40deg]">♡</div>
                     </div>
 
                     <div className="w-[390px] h-[570px] bg-Byellow rounded-[240px] z-10 shadow-xl opacity-80 relative overflow-hidden flex items-center justify-center">
@@ -105,7 +105,7 @@ export default function Home() {
 
             <section className="py-20 bg-white">
                 <div className="max-w-6xl mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-bold text-Bblack mb-4">Why Reframe Point?</h2>
+                    <h2 className="text-4xl font-bold text-Bblack mb-4">Why Genie?</h2>
                     <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
                         우리는 당신의 성장을 위한 최고의 환경을 제공합니다. 체계적인 콘텐츠와 커뮤니티를 통해 변화를
                         경험하세요.
