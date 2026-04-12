@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes draw-line {
+    0% {
+        stroke-dasharray: 0, 400;
+        stroke-dashoffset: 400;
+    }
+    100% {
+        stroke-dasharray: 400, 0;
+        stroke-dashoffset: 0;
+    }
+}
+
+.animate-draw-line path {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: draw-line 2s linear infinite;
+}
+
+@keyframes draw-curly-line {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.animate-curly-line path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw-curly-line 4s ease-in-out infinite;
+}
+
+* {
+    font-family: 'Noto Sans', sans-serif;
+}
