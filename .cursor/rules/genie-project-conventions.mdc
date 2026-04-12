@@ -1,0 +1,197 @@
+---
+description: ReframePoint(genie) Next.js+Supabase 코드 구조, 네이밍, 데이터 접근, 예외/로깅, 성능, 금지 패턴
+alwaysApply: true
+---
+
+# ReframePoint(genie) 프로젝트 컨벤션
+
+이 저장소는 **Next.js 15(App Router)**, **React 19**, **TypeScript(strict)**, **Supabase(@supabase/auth-helpers-nextjs, supabase-js)** 스택이다. Java/JPA는 사용하지 않으며, **데이터 접근은 Supabase 클라이언트 + `src/app/db`의 서버 전용 함수**로 이해한다.
+
+---
+
+## 1. 코드 구조 규칙
+
+### 패키지·디렉터리
+
+- **`src/app/`**: App Router 진입점. `page.tsx`, `layout.tsx`, 라우트별 폴더.
+- **`src/app/api/`**: Route Handlers (`route.ts`). HTTP 입출력·검증·상태 코드 담당.
+- **`src/app/db/index.ts`**: **서버 전용** Supabase 접근(`createServerComponentClient({ cookies })`). `responses` 등 RDB 스타일 CRUD·타입(`AnswerData`)을 둔다.
+- **`src/app/api/supabaseApi.ts`**: **클라이언트**에서 호출하는 Supabase 래퍼(`../lib/supabase`). 인증·참가자·테스트 저장·스토리지 등.
+- **`src/app/lib/`**: 공용 모듈(`supabase.ts`, `brandcolor.ts`, `type.ts`, `question(s).ts` 등).
+- **`src/app/context/`**: React Context(`AuthContext` + `useAuth` 훅).
+- **`src/app/about/components/`** 등: 라우트/기능별 **클라이언트 UI** 컴포넌트 분리.
+
+### 계층(역할 분리)
+
+| 계층 | 위치 | 책임 |
+|------|------|------|
+| UI / 페이지 | `page.tsx`, `*Client.tsx` | `'use client'` 여부, 상태, 라우팅(`useRouter`) |
+| 클라이언트 API 래퍼 | `api/supabaseApi.ts` | 브라우저 Supabase 호출, `{ data, error }` 반환 패턴 |
+| 서버 DB 접근 | `db/index.ts` | 쿠키 기반 서버 클라이언트, `throw`/`null`로 실패 표현 |
+| HTTP API | `api/**/route.ts` | JSON 검증, `NextResponse`/`Response`, try/catch |
+
+새 기능 추가 시 **같은 Supabase 테이블이라도** “서버에서만 쿠키 세션이 필요하면 `db`”, “클라이언트에서 직접 호출하면 `supabaseApi`”로 나눈다.
+
+---
+
+## 2. 네이밍 규칙
+
+- **React 컴포넌트·페이지 export**: `PascalCase` (`AuthProvider`, `NewParticipantPage`).
+- **함수·변수**: `camelCase` (`getParticipants`, `handleDelete`, `fetchParticipant`).
+- **DB 컬럼·Supabase 필드**: 코드베이스 관례에 맞춰 **`snake_case`** (`birth_date`, `participant_id`, `created_at`).
+- **상수**: `SCREAMING_SNAKE` 또는 의미 있는 `camel` 상수(`EXPIRATION_TIME` in `AuthContext`).
+- **타입/인터페이스**: `PascalCase` + 접미사 생략 가능(`Participant` 로컬 타입, `AnswerData` in `db`).
+- **경로 별칭**: `@/*` → `./src/*` (`import { insertAnswers } from '@/app/db'`).
+
+---
+
+## 3. 공통 패턴
+
+- **클라이언트 진입**: 파일 상단 `'use client'`.
+- **Supabase 브라우저 클라이언트**: `src/app/lib/supabase.ts`에서 `createClientComponentClient()` 단일 export.
+- **브랜드 색**: `import { brandColor } from '../lib/brandcolor'` 후 인라인 `style` 또는 Tailwind `text-Bgreen` 등과 병행.
+- **인증 컨텍스트**: `useAuth()`는 Provider 밖에서 쓰면 `throw new Error('useAuth must be used within an AuthProvider')`.
+- **리스트 + 필터**: `useState` + `useEffect`로 데이터 로드, `filter`로 검색 문자열 처리(`dashboard/page.tsx` 패턴).
+
+---
+
+## 4. 데이터 접근 규칙 (Supabase = “Repository”)
+
+- **서버 컴포넌트/Route에서 RLS·쿠키 세션 필요**: `db/index.ts` 패턴을 따른다.
+
+```typescript
+const supabase = createServerComponentClient({ cookies });
+const { data, error } = await supabase.from('responses').select('clientid, contact, answers, created_at');
+```
+
+- **클라이언트 상호작용**: `supabaseApi.ts`의 `supabase`로 `from().insert/select/update/delete`.
+- **단건 조회**: `.eq(...).limit(1).single()` 후 PostgREST `PGRST116`(없음)은 **에러가 아닌 빈 결과**로 처리할 수 있다(`getCoreEmotionTestResult`).
+- **정렬·최신순**: `.order('created_at', { ascending: false })`.
+- **민감 작업(관리자 생성 등)**: 클라이언트에서 `fetch('/api/...')`로 Route Handler에 위임(`createCounselorAccount`).
+
+트랜잭션: Supabase/PostgREST는 **명시적 DB 트랜잭션 API를 쓰지 않는다**. 연관 insert가 필요하면 **RPC 또는 단일 API 라우트에서 순차 호출 + 실패 시 보상 로직**을 설계한다.
+
+---
+
+## 5. 예외 처리 방식
+
+- **Route Handler**: 입력 검증 실패는 **4xx** + JSON `message`. 예외는 `try/catch`, `error instanceof Error` 분기 후 **5xx**(`submitAnswers/route.ts`).
+- **`db/index.ts`**: `error` 시 `console.error` 후 **`throw new Error('한글 사용자 메시지')`** 또는 조회 실패 시 **`return null`**(`getIdAnswers`).
+- **`supabaseApi`**: `getSession`처럼 실패 시 `null`, CRUD는 `{ data, error }` 그대로 반환하거나 `throw new Error`(`createCounselorAccount`).
+- **UI**: `alert`로 사용자 피드백(`AuthContext` 로그인 실패, 삭제 실패). 새 코드에서는 필요 시 토스트/인라인 에러로 확장 가능.
+
+---
+
+## 6. 로깅 방식
+
+- **`console.error`** 위주. 메시지에 **맥락**(한글 설명 + `error.message`)을 포함한다.
+- 디버그용 **`console.log`**는 개발 중 데이터 확인에만 사용하고, 프로덕션 노출이 부담되면 제거하거나 레벨 분기한다.
+
+예시(서버 insert 실패):
+
+```typescript
+if (error) {
+    console.error('Error inserting data:', error.message);
+    throw new Error('답변 저장 오류');
+}
+```
+
+---
+
+## 7. 성능 관련 규칙
+
+- **컬럼 선택**: 가능하면 **`select('a, b, c')`** — 전체 테이블 `select('*')`는 필요한 경우에만(`getParticipants` 등).
+- **단건**: `limit(1).single()`로 불필요한 다건 전송 방지.
+- **N+1**: 페이지에서 **참가자 목록마다 개별 쿼리**하지 말고, **한 번에 관계 데이터를 가져오는 쿼리** 또는 **서버에서 join/RPC**로 줄인다. 현재 패턴이 늘어나면 Supabase `select('*, related(*)')` 형태를 검토한다.
+- **이미지**: `next/image`, `priority`는 히어로 등 LCP 구간에만 제한적으로 사용(`page.tsx`).
+
+---
+
+## 8. 금지·주의 패턴 (코드베이스 기준)
+
+1. **`db` 함수를 클라이언트 컴포넌트에서 직접 import** — `cookies()`는 서버 전용이다.
+2. **Route Handler에서 `'use client'` 모듈(`@/app/lib/supabase`)에 의존** — 빌드/세션 경계가 어긋날 수 있다. 서버 라우트는 **서버 클라이언트 생성 패턴**을 사용한다.
+3. **`catch (e) {}` / 삼킨 예외** — 반드시 로깅 또는 응답으로 전달한다.
+4. **검증 없이 `request.json()`만 사용** — 필수 필드·타입 체크 후 400 응답(`submitAnswers`, `create-counselor`).
+5. **동일 테이블에 대해 `db`와 `supabaseApi` 로직 중복** — 새 코드는 한쪽으로 모으거나, 얇은 래퍼로 일관되게 유지한다.
+
+---
+
+## 9. 실제 코드 예시 (이 프로젝트 스타일)
+
+**서버 Route + `db` 레이어**
+
+```1:19:src/app/api/submitAnswers/route.ts
+import { NextResponse } from 'next/server';
+import { insertAnswers } from '@/app/db';
+
+export async function POST(request: Request) {
+    try {
+        const { clientid, answers, contact } = await request.json();
+
+        if (!clientid || !contact || typeof answers !== 'object' || Object.keys(answers).length === 0) {
+            return NextResponse.json(
+                { message: '유효한 clientid와 답변 객체를 전달해야 합니다.' },
+                { status: 400 }, // 잘못된 요청
+            );
+        }
+
+        console.log('Received data:', { clientid, answers, contact });
+
+        await insertAnswers(clientid, contact, answers);
+
+        return NextResponse.json({ message: '데이터가 성공적으로 저장되었습니다.' }, { status: 200 });
+```
+
+**서버 전용 Supabase + 명시적 컬럼 select**
+
+```37:47:src/app/db/index.ts
+export const getAnswers = async (): Promise<AnswerData[]> => {
+    const supabase = createServerComponentClient({ cookies });
+
+    const { data, error } = await supabase.from('responses').select('clientid, contact, answers, created_at');
+
+    if (error) {
+        console.error('데이터 조회 오류:', error.message);
+        throw new Error('데이터 조회 오류');
+    }
+
+    return data ?? [];
+};
+```
+
+**클라이언트 API 모듈 + `{ data, error }`**
+
+```59:77:src/app/api/supabaseApi.ts
+export const getParticipants = async () => {
+    const {
+        data: { user },
+        error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+        console.error('유저 정보 오류:', userError);
+        return { data: [], error: userError };
+    }
+
+    const { data, error } = await supabase
+        .from('participant')
+        .select('*')
+        .eq('counselors', user.id)
+        .order('created_at', { ascending: false }); // 최신순 정렬 추가
+
+    return { data, error };
+};
+```
+
+**Context + 커스텀 훅 가드**
+
+```96:99:src/app/context/AuthContext.tsx
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) throw new Error('useAuth must be used within an AuthProvider');
+    return context;
+};
+```
+
+새 코드는 위 패턴을 **기본값**으로 맞추고, 예외적으로 다른 스타일을 쓸 때는 이 파일과 충돌하지 않는지 확인한다.
