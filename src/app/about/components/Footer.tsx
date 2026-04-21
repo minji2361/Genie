@@ -38,7 +38,7 @@ export default function Footer() {
                         onMouseOver={(e) => (e.currentTarget.style.color = brandColor.orangeish)}
                         onMouseOut={(e) => (e.currentTarget.style.color = brandColor.enamel)}
                     >
-                        contact@reframepoint.com
+                        contact@Genie.com
                     </a>
                 </p>
             </div>
