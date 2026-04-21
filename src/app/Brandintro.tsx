@@ -29,7 +29,7 @@ const Brandintro = () => {
 
                     <div className="space-y-5 text-base md:text-lg leading-relaxed">
                         <p>
-                            <span className="font-medium text-Bgreen">ReframePoint</span>는 헬렌 켈러의 이 말을 마음에
+                            <span className="font-medium text-Bgreen">Genie</span>는 헬렌 켈러의 이 말을 마음에
                             새깁니다. 조건보다 그 조건을 통해 <span className="font-medium">무엇을 해내느냐</span>가
                             중요하니까요.
                         </p>
@@ -41,7 +41,7 @@ const Brandintro = () => {
                         </p>
 
                         <p>
-                            <span className="font-medium text-Bgreen">ReframePoint</span>는 각자의 가능성과 이야기를
+                            <span className="font-medium text-Bgreen">Genie</span>는 각자의 가능성과 이야기를
                             존중하며, 서로의 빛이 되어 주는 관계를 지향합니다.
                         </p>
 

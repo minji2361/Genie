@@ -40,7 +40,7 @@ export default function TeamMembers() {
             <div className="container mx-auto">
                 <h3 className="text-4xl font-extrabold text-center mb-6 text-Bblack">협력 단체</h3>
                 <p className="text-lg text-center max-w-3xl mx-auto mb-16 leading-relaxed text-Bblack">
-                    ReframePoint는 다양한 심리 전문 기관 및 코칭 및 상담 단체와 협력하여 더욱 전문적이고 신뢰성 있는
+                    Genie는 다양한 심리 전문 기관 및 코칭 및 상담 단체와 협력하여 더욱 전문적이고 신뢰성 있는
                     상담 서비스를 제공합니다.
                 </p>
 

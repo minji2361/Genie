@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const historyData = [
     {
         year: '2022',
-        event: 'ReframePoint 설립',
+        event: 'Genie 설립',
         description: '멘토들의 재능기부로 시작된 내면 성장과 변화의 여정이 시작되었습니다.',
     },
     {
@@ -30,7 +30,7 @@ export default function HistorySection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
             >
-                ReframePoint 연혁
+                Genie 연혁
             </motion.h3>
 
             <div className="relative max-w-3xl mx-auto">
