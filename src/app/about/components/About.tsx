@@ -21,7 +21,7 @@ export default function About() {
                     <span className="font-semibold text-Byellow">핵심, 출발점</span>을 뜻합니다.
                     <br />
                     <br />
-                    그래서 REFRAMEPOINT는
+                    그래서 Genie는
                     <br />
                     <span className="italic text-Bbrown text-lg">‘삶의 관점을 바꾸는 시작점’</span>입니다.
                 </p>
@@ -31,7 +31,7 @@ export default function About() {
             <div className="mb-24 text-center px-6">
                 <h3 className="text-3xl font-semibold text-Bgreen mb-6 tracking-wide">우리의 마음, 우리의 힘</h3>
                 <p className="text-Bblack text-lg max-w-3xl mx-auto leading-relaxed tracking-wide">
-                    ReframePoint는 심리상담사, 재능기부자, 다양한 분야의 멘토들이 모여
+                    Genie는 심리상담사, 재능기부자, 다양한 분야의 멘토들이 모여
                     <br />
                     청년들의 성장과 자립을 위한 든든한 기반이 되어주는{' '}
                     <span className="font-semibold text-Byellow">멘토링 커뮤니티</span>입니다.
@@ -66,7 +66,7 @@ ReframePoint는 각자가 가진 가능성과 이야기를 존중하며,
             <div className="text-center px-6 max-w-3xl mx-auto">
                 <h3 className="text-3xl font-semibold text-Byellow mb-6 tracking-wide">우리가 나아갈 길</h3>
                 <p className="text-Bblack text-lg leading-relaxed tracking-wide">
-                    앞으로도 ReframePoint는
+                    앞으로도 Genie는
                     <br />
                     <span className="font-semibold text-Bgreen">
                         “모두가 자신의 삶을 스스로 디자인하는 힘을 키우는 것”

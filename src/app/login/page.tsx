@@ -43,7 +43,7 @@ export default function ReframePoint() {
                             우리의 미션
                         </h2>
                         <p className="text-lg text-gray-600">
-                            ReframePoint는 교육을 통해 개인의 잠재력을 극대화합니다.
+                            Genie는 교육을 통해 개인의 잠재력을 극대화합니다.
                         </p>
                     </section>
                     <button

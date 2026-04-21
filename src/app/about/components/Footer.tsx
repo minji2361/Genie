@@ -7,7 +7,7 @@ export default function Footer() {
         <footer className="py-12" style={{ backgroundColor: brandColor.deepmoss, color: brandColor.enamel }}>
             <div className="container mx-auto px-6 md:px-0 max-w-4xl text-center space-y-4">
                 <p className="text-sm md:text-base font-semibold tracking-wide">
-                    © 2022 ReframePoint. All rights reserved.
+                    © 2022 Genie. All rights reserved.
                 </p>
 
                 <p className="text-sm md:text-base flex items-center justify-center gap-2">
